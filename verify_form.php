@@ -33,7 +33,7 @@ class verify_form extends moodleform {
         $mform->addRule('code', null, 'required', null, 'client');
 
         // Add recaptcha if enabeld.
-        if ($this->is_recaptcha_enabled()) {
+        if (false && $this->is_recaptcha_enabled()) {
             $mform->addElement('recaptcha', 'recaptcha_element',
                             get_string('recaptcha', 'auth'), array('https' => $CFG->loginhttps));
             $mform->addHelpButton('recaptcha_element', 'recaptcha', 'auth');
@@ -44,13 +44,12 @@ class verify_form extends moodleform {
 
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
-        if ($this->is_recaptcha_enabled()) {
+        if (false && $this->is_recaptcha_enabled()) {
             $recaptchaelement = $this->_form->getElement('recaptcha_element');
             if (!empty($this->_form->_submitValues['recaptcha_challenge_field'])) {
                 $challengefld = $this->_form->_submitValues['recaptcha_challenge_field'];
                 $responsefld = $this->_form->_submitValues['recaptcha_response_field'];
-                $result = $recaptchaelement->verify($challengefld, $responsefld);
-                if (true !== $result) {
+                if (true !== ($result = $recaptchaelement->verify($challengefld, $responsefld))) {
                     $errors['recaptcha'] = $result;
                 }
             } else {

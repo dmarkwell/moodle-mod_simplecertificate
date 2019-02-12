@@ -29,8 +29,7 @@ require_once('lib.php');
 $id = required_param('id', PARAM_INT);// Course Module ID.
 
 // Ensure that the course specified is valid.
-$course = $DB->get_record('course', array('id' => $id));
-if (!$course) {
+if (!$course = $DB->get_record('course', array('id' => $id))) {
     print_error('Course ID is incorrect');
 }
 
@@ -56,16 +55,14 @@ $PAGE->set_title($strcertificates);
 $PAGE->set_heading($course->fullname);
 
 // Get the certificates, if there are none display a notice.
-$certificates = get_all_instances_in_course('simplecertificate', $course);
-if (!$certificates) {
+if (!$certificates = get_all_instances_in_course('simplecertificate', $course)) {
     echo $OUTPUT->header();
     notice(get_string('nocertificatesissued', 'simplecertificate'), "$CFG->wwwroot/course/view.php?id=$course->id");
     echo $OUTPUT->footer();
     exit();
 }
 
-$usesections = course_format_uses_sections($course->format);
-if ($usesections) {
+if ($usesections = course_format_uses_sections($course->format)) {
     $modinfo = get_fast_modinfo($course->id);
     $sections = $modinfo->get_section_info_all();
 }

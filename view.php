@@ -37,18 +37,16 @@ $orderby = optional_param('orderby', 'username', PARAM_RAW);
 $issuelist = optional_param('issuelist', null, PARAM_ALPHA);
 $selectedusers = optional_param_array('selectedusers', null, PARAM_INT);
 
-$cm = get_coursemodule_from_id( 'simplecertificate', $id);
-if (!$cm) {
+
+if (!$cm = get_coursemodule_from_id( 'simplecertificate', $id)) {
     print_error('Course Module ID was incorrect');
 }
 
-$course = $DB->get_record('course', array('id' => $cm->course));
-if (!$course) {
+if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
     print_error('course is misconfigured');
 }
 
-$certificate = $DB->get_record('simplecertificate', array('id' => $cm->instance));
-if (!$certificate) {
+if (!$certificate = $DB->get_record('simplecertificate', array('id' => $cm->instance))) {
     print_error('course module is incorrect');
 }
 

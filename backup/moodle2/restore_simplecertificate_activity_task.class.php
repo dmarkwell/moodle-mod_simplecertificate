@@ -117,8 +117,7 @@ class restore_simplecertificate_activity_task extends restore_activity_task {
     public function after_restore() {
         global $DB;
 
-        $certificate = $DB->get_record('simplecertificate', array('id' => $this->get_activityid()));
-        if ($certificate) {
+        if ($certificate = $DB->get_record('simplecertificate', array('id' => $this->get_activityid()))) {
             if ($certificate->certdate <= -1000) { // If less or equal -1000, is mark as not sucefully retored in stepslib.
                 $certificate->certdate = $certificate->certdate / -1000;
 
@@ -140,10 +139,8 @@ class restore_simplecertificate_activity_task extends restore_activity_task {
             if ($certificate->certgrade <= -1000) { // If greater than 0, then it is a grade item value.
                 $certificate->certgrade = $certificate->certgrade / -1000;
 
-                $mapping = restore_dbops::get_backup_ids_record(
-                    $this->get_restoreid(), 'course_module', $certificate->certgrade
-                );
-                if ($mapping) {
+                if ($mapping = restore_dbops::get_backup_ids_record($this->get_restoreid(), 'course_module',
+                                                                    $certificate->certgrade)) {
                     $certificate->certgrade = $mapping->newitemid;
                 } else {
                     $this->get_logger()->process(
@@ -158,8 +155,7 @@ class restore_simplecertificate_activity_task extends restore_activity_task {
             }
 
             // Process issued files.
-            $issues = $DB->get_records('simplecertificate_issues', array('certificateid' => $certificate->id));
-            if ($issues) {
+            if ($issues = $DB->get_records('simplecertificate_issues', array('certificateid' => $certificate->id))) {
 
                 $fs = get_file_storage();
                 foreach ($issues as $issued) {

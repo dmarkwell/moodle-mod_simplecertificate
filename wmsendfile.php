@@ -24,10 +24,12 @@
  */
 
 require_once(dirname(dirname(dirname(__FILE__))) . '/config.php');
+// ... $id = required_param('id', PARAM_INTEGER); // Issed Code.
+// ... $sk = required_param('sk', PARAM_RAW); // sesskey.
 $code = required_param('code', PARAM_TEXT); // Issued Code.
 
-$issuedcert = $DB->get_record("simplecertificate_issues", array('code' => $code));
-if (!$issuedcert) {
+
+if (!$issuedcert = $DB->get_record("simplecertificate_issues", array('code' => $code))) {
     print_error(get_string('issuedcertificatenotfound', 'simplecertificate'));
 } else {
     send_certificate_file($issuedcert);
@@ -74,8 +76,7 @@ function send_certificate_file(stdClass $issuedcert) {
     }
 
     $canmanage = false;
-    $cm = get_coursemodule_from_instance('simplecertificate', $issuedcert->certificateid);
-    if ($cm) {
+    if ($cm = get_coursemodule_from_instance('simplecertificate', $issuedcert->certificateid)) {
         $canmanage = has_capability('mod/simplecertificate:manage', context_course::instance($cm->course));
     }
 
@@ -170,7 +171,7 @@ function put_watermark($file) {
                         null
     );
 
-    // For DEBUG
+    // For DEGUG
     // $pdf->Output($file->get_filename(), 'I');.
 
     // Save and send tmpfiles.

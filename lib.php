@@ -236,8 +236,7 @@ function simplecertificate_get_completion_state($course, $cm, $userid, $type) {
     $context = context_module::instance($cm->id);
     $simplecertificate = new simplecertificate($context, $cm, $course);
 
-    $requiredtime = $simplecertificate->get_instance()->requiredtime;
-    if ($requiredtime) {
+    if ($requiredtime = $simplecertificate->get_instance()->requiredtime) {
         return ($simplecertificate->get_course_time($userid) >= $requiredtime);
     }
     // Completion option is not enabled so just return $type.
@@ -288,8 +287,7 @@ function simplecertificate_pluginfile($course, $cm, $context, $filearea, $args, 
         $filename = array_shift($args);
         $fs = get_file_storage();
 
-        $file = $fs->get_file($context->id, 'mod_simplecertificate', 'tmp', 0, '/', $filename);
-        if ($file) {
+        if ($file = $fs->get_file($context->id, 'mod_simplecertificate', 'tmp', 0, '/', $filename)) {
             send_stored_file($file, null, 0, false);
         }
 
@@ -303,8 +301,11 @@ function simplecertificate_pluginfile($course, $cm, $context, $filearea, $args, 
         // add a simple  number sequence (1,2,3,4....) as id value, it's better use the certificate code
         // instead.
 
-        $issuedcert = $DB->get_record("simplecertificate_issues", array('id' => $id));
-        if (!$issuedcert) {
+        // ...$url = new moodle_url('wmsendfile.php');
+        // ...$url->param('id', (int)array_shift($args));
+        // ...$url->param('sk', sesskey()); .
+
+        if (!$issuedcert = $DB->get_record("simplecertificate_issues", array('id' => $id))) {
             return false;
         }
         $url = new moodle_url('wmsendfile.php');
@@ -324,8 +325,7 @@ function simplecertificate_get_outcomes() {
 
     // Get all outcomes in course.
     $gradeseq = new grade_tree($COURSE->id, false, true, '', false);
-    $gradeitems = $gradeseq->items;
-    if ($gradeitems) {
+    if ($gradeitems = $gradeseq->items) {
         // List of item for menu.
         $printoutcome = array();
         foreach ($gradeitems as $gradeitem) {
@@ -341,7 +341,7 @@ function simplecertificate_get_outcomes() {
             $outcomeoptions[$key] = $value;
         }
     } else {
-        $outcomeoptions['0'] = get_string('nooutcomes', 'grades');
+        $outcomeoptions['0'] = get_string('nooutcomes', 'simplecertificate');
     }
 
     return $outcomeoptions;
@@ -371,8 +371,7 @@ function simplecertificate_get_post_actions() {
 function simplecertificate_send_event($certificate) {
     global $DB, $CFG;
     require_once($CFG->dirroot . '/calendar/lib.php');
-    $event = $DB->get_record('event', array('modulename' => 'simplecertificate', 'instance' => $certificate->id));
-    if ($event) {
+    if ($event = $DB->get_record('event', array('modulename' => 'simplecertificate', 'instance' => $certificate->id))) {
         $calendarevent = calendar_event::load($event->id);
         $calendarevent->name = $certificate->name;
         $calendarevent->update($calendarevent);
@@ -396,11 +395,8 @@ function simplecertificate_send_event($certificate) {
  * @return array
  */
 function simplecertificate_get_editor_options(stdclass $context) {
-    return array('subdirs' => 0, 'maxbytes' => 0,
-        'maxfiles' => 0, 'changeformat' => 0,
-        'context' => $context, 'noclean' => 0,
-        'trusttext' => 0
-    );
+    return array('subdirs' => 0, 'maxbytes' => 0, 'maxfiles' => 0, 'changeformat' => 0, 'context' => $context, 'noclean' => 0,
+            'trusttext' => 0);
 }
 
 /**
@@ -482,6 +478,7 @@ function simplecertificate_print_issue_certificate_file(stdClass $issuecert) {
 
         $url = new moodle_url('wmsendfile.php');
         $url->param('code', $issuecert->code);
+        // ...$url->param('sk', sesskey());.
 
         $output .= '<a href="' . $url->out(true) . '" target="_blank" >' . s($file->get_filename()) . '</a>';
 

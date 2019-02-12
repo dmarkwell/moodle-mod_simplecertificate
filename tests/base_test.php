@@ -28,6 +28,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $CFG;
 require_once($CFG->dirroot . '/mod/simplecertificate/locallib.php');
+// ...require_once($CFG->dirroot . '/mod/simplecertificate/upgradelib.php');.
 
 /**
  * Unit tests for (some of) mod/simplecertificate/locallib.php.

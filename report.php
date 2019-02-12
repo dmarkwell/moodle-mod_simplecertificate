@@ -28,18 +28,15 @@ require_once(dirname(__FILE__) . '/locallib.php');
 
 $id   = required_param('id', PARAM_INT); // Course module ID.
 
-$cm = get_coursemodule_from_id('simplecertificate', $id);
-if (!$cm) {
+if (!$cm = get_coursemodule_from_id('simplecertificate', $id)) {
     print_error('Course Module ID was incorrect');
 }
 
-$course = $DB->get_record('course', array('id' => $cm->course));
-if (!$course) {
+if (!$course = $DB->get_record('course', array('id' => $cm->course))) {
     print_error('Course is misconfigured');
 }
 
-$certificate = $DB->get_record('simplecertificate', array('id' => $cm->instance));
-if (!$certificate) {
+if (!$certificate = $DB->get_record('simplecertificate', array('id' => $cm->instance))) {
     print_error('Certificate ID was incorrect');
 }
 
